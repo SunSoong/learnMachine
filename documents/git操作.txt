@@ -1,0 +1,57 @@
+设置电脑全局的用户名和邮箱
+git config --global user.name "sunsoong"
+git config --global user.email "sunsoong@qq.com"
+
+
+初始化本地仓库
+git init
+
+查看文件状态
+git status
+查看文件提交日志  从最近到最远排列
+git log
+版本回退(上一个版本HEAD^  上上一个HEAD^^)
+git reset --hard HEAD^
+指定版本号回退
+git reset --hard 6dc676s
+
+
+把文件添加到暂存区
+git add .
+把暂存区的内容提交到当前分支
+git commit -m "提交注解"
+
+
+查看分支
+git branch
+切换分支
+git checkout 分支名
+创建并切换分支
+git checkout -b 分支名
+
+创建远程仓库 连接ssh
+ssh-keygen  
+三次enter后在c盘user的.ssh中
+
+连接远程仓库
+git remote add origin 仓库地址
+
+第一次推送主分支的内容
+git push -u origin master
+
+下载远程仓库到本地仓库
+git clone 仓库地址
+
+合并分支
+git merge 分支名
+删除分支
+git branch -d branchname
+移除缓存的账号
+git remote rm origin
+
+
+
+git clone 后没有开发权限  需要重新配置ssh
+ssh-key -t rsa
+
+配置好,公钥发给管理员  管理员在repository中添加开发权限
