@@ -42,15 +42,28 @@ def bestSplit(dataSet):
         ents = 0  # 熵
         # levels:{"0","1"}
         for j in levels:  # 遍历每一个属性
-            childSet = dataSet[dataSet.iloc[:, i] == j]
+            childSet = dataSet[dataSet.iloc[:, i] == j]  # 取dataSet中每一个 第i列的值=j 的行 即 切分后属于同一分类的集合的元素
             # 计算当前j值 得熵
-            ent = calcShannon(childSet)
-            ent += (childSet.shape[0] / dataSet.shape[0]) * ent
-            infoGain = baseEnt - ents
+            ent = calcShannon(childSet)  # 求 当前集合的 熵
+            ent += (childSet.shape[0] / dataSet.shape[0]) * ent  # 求 子集合 的信息熵之和
+            infoGain = baseEnt - ents  # 求划分后的信息增益
             if (infoGain > bestGain):
                 bestGain = infoGain  # 选择最大信息增益
                 axis = i
     return axis
+
+
+def muSplit(dataSet, axis, value):
+    """
+    按照给定的列 下标切分数据集
+    :param dataSet: 原始数据集
+    :param axis:指定的列索引
+    :param value:指定索引的值
+    :return: 按照指定索引划分后的数据集
+    """
+    col = dataSet.columns[axis]
+    redataSet = dataSet.loc[dataSet[col] == value, :].drop(col, axis=1)
+    return redataSet
 
 
 dataSet = createDataSet()
