@@ -66,6 +66,7 @@ def gnb_classify(train, test):
             prob *= iprob[k]  # 特征概率之积 为当前实例总概率
             cla = prob.index[np.argmax(prob.values)]  # 返回最大概率的类别 argmax返回最大值索引的值,结果为标签
         result.append(cla)
+    print(result)
     test["predict"] = result
     acc = (test.iloc[:, -1] == test.iloc[:, -2]).mean()  # 计算预测准确率
     # print(f"模型预测准确率为{acc}")
