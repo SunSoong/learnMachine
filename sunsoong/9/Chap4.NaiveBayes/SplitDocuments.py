@@ -28,7 +28,7 @@ def createVocabList(dataSet):
     for doc in dataSet:  # 遍历dataSet中的每一条言论
         vocabSet = vocabSet | set(doc)  # 取并集,去重
         vocabList = list(vocabSet)
-    print(vocabList)
+    print("vocabList: ", vocabList)
     return vocabList
 
 
@@ -59,10 +59,37 @@ def get_trainMat(dataSet):
     for inputSet in dataSet:  # 遍历样本词条中每一条样本
         returnVec = setOfWord2Vec(vocabList, inputSet)  # 将当前词条向量化
         trainMat.append(returnVec)  # 追加到向量列表
-    print("returnVec: ", returnVec)
-    print("trainMat: ", trainMat)
+    # print("returnVec: ", returnVec)
+    # print("trainMat: ", trainMat)
     return trainMat
 
+
+# def trainNB(trainMat, classVec):
+#     """
+#     朴素贝叶斯分类器训练函数
+#     :param trainMat:训练文档矩阵
+#     :param classVec:训练类别标签向量
+#     :return: p0v: 非侮辱类的条件概率数组
+#              p1v: 侮辱类的条件概率数组
+#              pAb: 文档属于侮辱类的概率
+#     """
+#     n = len(trainMat)  # 计算训练的文档数目
+#     m = len(trainMat[0])  # 计算每篇文档的词条数
+#     pAb = sum(classVec) / n  # 文档属于侮辱类的概率
+#     p0Num = np.zeros(m)  # 词条出现数初始化为0
+#     p1Num = np.zeros(m)  # 词条出现数初始化为0
+#     p0Denom = 0  # 分母初始化为0
+#     p1Denom = 0
+#     for i in range(n):  # 遍历每一个文档
+#         if classVec[i] == 1:  # 统计属于侮辱类的条件概率所需的数据
+#             p1Num += trainMat[i]
+#             p1Denom += sum(trainMat[i])
+#         else:  # 统计属于非侮辱类的条件概率所需的数据
+#             p0Num += trainMat[i]
+#             p0Denom += sum(trainMat[i])
+#     p1v = p1Num / p1Denom
+#     p0v = p0Num / p0Denom
+#     return p0v, p1v, pAb
 
 def trainNB(trainMat, classVec):
     """
@@ -76,10 +103,10 @@ def trainNB(trainMat, classVec):
     n = len(trainMat)  # 计算训练的文档数目
     m = len(trainMat[0])  # 计算每篇文档的词条数
     pAb = sum(classVec) / n  # 文档属于侮辱类的概率
-    p0Num = np.zeros(m)  # 词条出现数初始化为0
-    p1Num = np.zeros(m)  # 词条出现数初始化为0
-    p0Denom = 0  # 分母初始化为0
-    p1Denom = 0
+    p0Num = np.ones(m)  # 词条出现数初始化为1
+    p1Num = np.ones(m)  # 词条出现数初始化为1
+    p0Denom = 2  # 分母初始化为2
+    p1Denom = 2
     for i in range(n):  # 遍历每一个文档
         if classVec[i] == 1:  # 统计属于侮辱类的条件概率所需的数据
             p1Num += trainMat[i]
@@ -87,10 +114,30 @@ def trainNB(trainMat, classVec):
         else:  # 统计属于非侮辱类的条件概率所需的数据
             p0Num += trainMat[i]
             p0Denom += sum(trainMat[i])
-    p1v = p1Num / p1Denom
-    p0v = p0Num / p0Denom
+    p1v = np.log(p1Num / p1Denom)
+    p0v = np.log(p0Num / p0Denom)
     return p0v, p1v, pAb
 
+
+# def classifyNB(vec2Classify, p0v, p1v, pAb):
+#     """
+#     朴素贝叶斯分类器分类函数
+#     :param vec2Classify: 待分类的词条数组
+#     :param p0v:非侮辱类的条件概率数组
+#     :param p1v: 侮辱类条件概率数组
+#     :param pAb: 文档属于侮辱类的概率
+#     :return:
+#              0:属于非侮辱类
+#              1:属于侮辱类
+#     """
+#     p1 = reduce(lambda x, y: x * y, vec2Classify * p1v) * pAb
+#     p0 = reduce(lambda x, y: x * y, vec2Classify * p0v) * (1 - pAb)
+#     print("p0: ", p0)
+#     print("p1: ", p1)
+#     if p1 > p0:
+#         return 1
+#     else:
+#         return 0
 
 def classifyNB(vec2Classify, p0v, p1v, pAb):
     """
@@ -103,8 +150,8 @@ def classifyNB(vec2Classify, p0v, p1v, pAb):
              0:属于非侮辱类
              1:属于侮辱类
     """
-    p1 = reduce(lambda x, y: x * y, vec2Classify * p1v) * pAb
-    p0 = reduce(lambda x, y: x * y, vec2Classify * p0v) * (1 - pAb)
+    p1 = sum(vec2Classify * p1v) + np.log(pAb)
+    p0 = sum(vec2Classify * p0v) + np.log(1 - pAb)
     print("p0: ", p0)
     print("p1: ", p1)
     if p1 > p0:
@@ -130,10 +177,9 @@ def trainingNB(testVec):
         print(testVec, "属于非侮辱类")
 
 
-dataSet, classVec = loadDataSet()
-trainMat = get_trainMat(dataSet)
-
-p0v, p1v, pAb = trainNB(trainMat, classVec)
+# dataSet, classVec = loadDataSet()
+# trainMat = get_trainMat(dataSet)
+# p0v, p1v, pAb = trainNB(trainMat, classVec)
 # 测试样本1
 testVec1 = ['love', 'my', 'dalmation']
 trainingNB(testVec1)
