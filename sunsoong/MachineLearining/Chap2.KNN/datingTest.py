@@ -73,6 +73,13 @@ train, test = randSplit(datingT)
 # print(test.shape[0])
 
 def datingClass(train, test, k):
+    """
+    KNN-近邻算法分类器
+    :param train: 训练集
+    :param test: 测试集
+    :param k: k-近邻参数,即选择最小的k个点
+    :return: 预测好分类的测试集
+    """
     n = train.shape[1] - 1  # 训练集 标签之外的列数
     m = test.shape[0]  # 测试集行数
     result = []

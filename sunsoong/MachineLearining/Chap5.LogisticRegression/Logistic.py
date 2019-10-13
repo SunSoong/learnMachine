@@ -30,9 +30,16 @@ def regularize(xMat):
 
 
 def BGD_LR(dataSet, alpha=0.001, maxCycles=500):
+    """
+    使用BGD求解逻辑回归
+    :param dataSet: 数据集
+    :param alpha: 步长
+    :param maxCycles: 最大迭代次数
+    :return:  weights:各特征权重值
+    """
     xMat = np.mat(dataSet.iloc[:, :-1].values)
     yMat = np.mat(dataSet.iloc[:, -1].values).T
-    xMat = regularize(xMat)
+    xMat = regularize(xMat)  # 标椎化
     m, n = xMat.shape
     weights = np.zeros((n, 1))
     for i in range(maxCycles):
