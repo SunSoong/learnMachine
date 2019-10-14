@@ -58,6 +58,7 @@ def get_trainMat(dataSet):
     vocabList = createVocabList(dataSet)  # 生成词汇表
     for inputSet in dataSet:  # 遍历样本词条中每一条样本
         returnVec = setOfWord2Vec(vocabList, inputSet)  # 将当前词条向量化
+        print(returnVec)
         trainMat.append(returnVec)  # 追加到向量列表
     # print("returnVec: ", returnVec)
     # print("trainMat: ", trainMat)
